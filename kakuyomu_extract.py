@@ -165,12 +165,13 @@ def fetch_and_parse(
     return title, paragraphs
 
 
-def build_markdown(title: str, source_url: str, paragraphs: list[str]) -> str:
+def build_markdown(index_number: int, title: str, source_url: str, paragraphs: list[str]) -> str:
     """Build an Obsidian-compatible Markdown note."""
     body = "\n\n".join(paragraphs)
 
     return (
         "---\n"
+        f"index_number: {index_number}\n"
         f'title: "{title.replace(chr(34), chr(92) + chr(34))}"\n'
         f'source_url: "{source_url}"\n'
         "---\n\n"
@@ -270,6 +271,7 @@ def main():
                 )
 
                 markdown = build_markdown(
+                    episode["number"],
                     title,
                     episode["url"],
                     paragraphs,
