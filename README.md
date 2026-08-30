@@ -1,3 +1,8 @@
+## Tính năng
+- Tạo Table of Content
+- Xuất file raw
+- Gửi AI dịch file raw 
+
 ## Requirements
 
 1. Python 3.9+
