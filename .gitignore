@@ -1,3 +1,5 @@
 .code-workspace
-output/
-toc.md
+__pycache__/
+core/__pycache__
+engines/__pycache__
+poc/

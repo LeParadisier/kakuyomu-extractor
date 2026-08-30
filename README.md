@@ -1,65 +1,36 @@
-# kakuyomu-extractor
-Extract contents from kakuyomu
+## Requirements
 
-## Cơ chế hoạt động:
-1. Lấy `toc.md` với cấu trúc: `index_number. Chapter_title Link`
-2. Dựa vào `index_number` trong `toc.md` để đặt tên file chapter
-3. Dựa vào `Link` trong `toc.md` để parsing HTML tìm nội dung
-4. Extract chapter title & content
-5. Lưu về máy dưới dạng `chapter_x_raw.md`
+1. Python 3.9+
+2. Cài đặt dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Nếu dùng AI, phải chuẩn bị API KEY
 
+## Khởi chạy
 
-## Tính năng:
-- Tùy chỉnh range
-- Extract episode → `.md`
-- Output path tùy chỉnh
-- Skip `.md` đã tồn tại
-- Random delay giữa request
-- Báo lỗi request
+1. Mở Powershell
+2. Chạy lệnh
 
+    ```
+    python app.py
+    ```
 
-## Usage
-### Step 1:
-Đầu tiên, nhập link trang chính của truyện
+3. Làm theo hướng dẫn
 
-```	
-python kakuyomu_toc.py "Insert_URL_here" "toc.md"
-```
+## Chú thích:
 
-### Step 2:
-Sau đó mới bắt đầu kéo content về
+- Định dạng chọn chương: 
+    Hỗ trợ chuỗi đơn (1), khoảng (1-10), phân tách bằng dấu phẩy (1,3,7), hoặc kết hợp (1,3,7-10).
 
-**Chỉ định thư mục output:**
+- Tính năng Resume (Work-in-process)
+    Tự động bỏ qua các file đã tồn tại
 
-```
-python kakuyomu_extract.py "toc.md" "chapter_cần_tải" "đường_dẫn_folder"
-```
-
-Mặc định delay giữa các request là **3–7 giây ngẫu nhiên**. Có thể tùy chỉnh:
-
-```
-python kakuyomu_extract.py "toc.md" "chapter_cần_tải" 4 8
-```
-
-→ delay ngẫu nhiên **4–8 giây**.
-
-
-#### Ví dụ:
-
-**Lấy một chapter:**
-
-```
-python kakuyomu_extract.py "toc.md" "5"
-```
-
-**Lấy một loạt:**
-
-```
-python kakuyomu_extract.py "toc.md" "5-10"
-```
-
-**Lấy nhiều episode rời nhau:**
-
-```
-python kakuyomu_extract.py "toc.md" "5,8,12"
-```
+## To-do list
+- Cơ chế tùy chọn System prompt
+- Check dependency chỉ cần 1 lần vào lần đầu launch?
+- Cơ chế check file `toc.md` có phù hợp không?
+- Lần 1 chạy thì xuất `toc.md`
+- Nhưng lần 2 trở đi thì đâu cần phải xuất toc.md ra nữa? chỉ việc dựa vào `toc.md` để tiếp tục tiến trình? 
+- Logic dịch file hàng loạt bằng AI? 
+- Số lượng token đã dùng?
