@@ -1,41 +1,35 @@
-## Tính năng
-- Tạo Table of Content
-- Xuất file raw
-- Gửi AI dịch file raw 
+Command-line tương tác qua Powershell/Terminal windows để trích xuất content trên kakuyomu
+Có hỗ trợ tích hợp AI
+
+---
 
 ## Requirements
 
 1. Python 3.9+
 2. Cài đặt dependencies:
-   ```bash
+   
+   ```
    pip install -r requirements.txt
    ```
 3. Nếu dùng AI, phải chuẩn bị API KEY
 
-## Khởi chạy
-
-1. Mở Powershell
-2. Chạy lệnh
+## Usage
+1. Download file zip và giải nén
+2. Mở Powershell trong thư mục giải nén
+3. Chạy lệnh
 
     ```
     python app.py
     ```
 
-3. Làm theo hướng dẫn
 
-## Chú thích:
+## To-do
+1. Cần có cơ chế thay đổi model AI
+    Hiện tại mặc định là gemini-3.5-flash
+2. Tối ưu hóa logic của hệ thống `engine/`
 
-- Định dạng chọn chương: 
-    Hỗ trợ chuỗi đơn (1), khoảng (1-10), phân tách bằng dấu phẩy (1,3,7), hoặc kết hợp (1,3,7-10).
+## Update logs
 
-- Tính năng Resume (Work-in-process)
-    Tự động bỏ qua các file đã tồn tại
-
-## To-do list
-- Cơ chế tùy chọn System prompt
-- Check dependency chỉ cần 1 lần vào lần đầu launch?
-- Cơ chế check file `toc.md` có phù hợp không?
-- Lần 1 chạy thì xuất `toc.md`
-- Nhưng lần 2 trở đi thì đâu cần phải xuất toc.md ra nữa? chỉ việc dựa vào `toc.md` để tiếp tục tiến trình? 
-- Logic dịch file hàng loạt bằng AI? 
-- Số lượng token đã dùng?
+### 07/Sep/2026
+Overhaul 90% cách tương tác 
+Hoàn thiện logic
