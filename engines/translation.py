@@ -80,16 +80,17 @@ def run_translation(
     client = genai.Client(api_key=api_key)
     start_time = time.perf_counter()
 
-    response = client.models.generate_content(
+    chat = client.chats.create(
         model=model,
-        contents=story,
         config=types.GenerateContentConfig(
             system_instruction=system_prompt,
             thinking_config=types.ThinkingConfig(
-                thinking_level=types.ThinkingLevel(thinking_level)
+                thinking_level=types.ThinkingLevel(thinking_level),
             ),
         ),
     )
+
+    response = chat.send_message(story)
 
     elapsed_time = time.perf_counter() - start_time
     translation = (response.text or "").strip()
