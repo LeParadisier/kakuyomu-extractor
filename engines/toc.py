@@ -25,8 +25,10 @@ def get_work_html(url: str) -> str:
 def extract_next_data(html: str) -> dict:
     soup = BeautifulSoup(html, "html.parser")
     script = soup.find("script", id="__NEXT_DATA__")
-    if script is None:
-        raise RuntimeError("Failed to locate __NEXT_DATA__ element.")
+
+    if script is None or not script.string:
+        raise RuntimeError("Failed to locate valid __NEXT_DATA__ content.")
+
     return json.loads(script.string)
 
 
