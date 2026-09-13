@@ -13,6 +13,13 @@ THINKING_LEVEL_MAP = {
     "4": "HIGH"
 }
 
+MODEL_MAP = {
+    "1": "gemini-3.5-flash",
+    "2": "gemini-3.6-flash",
+    "3": "gemini-3.7-flash",
+    "4": "gemini-3.8-flash",
+    "5": "CUSTOM"
+}
 
 def load_markdown(path: Path):
     text = path.read_text(encoding="utf-8")
@@ -78,7 +85,9 @@ def run_translation(
         contents=story,
         config=types.GenerateContentConfig(
             system_instruction=system_prompt,
-            thinking_config=types.ThinkingConfig(thinking_level=thinking_level),
+            thinking_config=types.ThinkingConfig(
+                thinking_level=types.ThinkingLevel(thinking_level)
+            ),
         ),
     )
 

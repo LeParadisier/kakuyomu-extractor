@@ -9,7 +9,7 @@ from core.project import initialize_project_folders
 from core.selection import parse_selection_string
 from engines.toc import run_toc_extraction
 from engines.extraction import run_chapter_extraction
-from engines.translation import THINKING_LEVEL_MAP, run_translation
+from engines.translation import THINKING_LEVEL_MAP, MODEL_MAP, run_translation
 
 APP_DIR = Path(__file__).parent.resolve()
 PROJECTS_BASE_DIR = APP_DIR / "Projects"
@@ -22,6 +22,49 @@ def get_user_choice(prompt: str, valid_choices: list[str]) -> str:
         if choice in valid_choices:
             return choice
         print(f"Lựa chọn không hợp lệ. Vui lòng chọn: {', '.join(valid_choices)}")
+
+
+def get_chapter_numbers(directory: Path, pattern: str) -> list[int]:
+    """Lấy số chapter từ tên file theo pattern chapter_<n>_*.md."""
+    numbers = []
+
+    for file in directory.glob(pattern):
+        try:
+            number = int(file.name.split("_")[1])
+            numbers.append(number)
+        except (IndexError, ValueError):
+            continue
+
+    return sorted(set(numbers))
+
+
+def format_chapter_ranges(numbers: list[int]) -> str:
+    """Hiển thị chapter lẻ riêng, chapter liên tiếp thành dạng chuỗi."""
+    if not numbers:
+        return "Không có"
+
+    numbers = sorted(set(numbers))
+    ranges = []
+    start = previous = numbers[0]
+
+    for number in numbers[1:]:
+        if number == previous + 1:
+            previous = number
+            continue
+
+        if start == previous:
+            ranges.append(str(start))
+        else:
+            ranges.append(f"{start}-{previous}")
+
+        start = previous = number
+
+    if start == previous:
+        ranges.append(str(start))
+    else:
+        ranges.append(f"{start}-{previous}")
+
+    return ", ".join(ranges)
 
 
 def extract_chapters_flow(project_dir: Path):
@@ -61,16 +104,30 @@ def translate_chapters_flow(project_dir: Path, api_key: str, enable_ai: bool):
     ai_dir = project_dir / "AI_translated"
     prompt_file = project_dir / "system_prompt" / "default.txt"
 
-    available_raws = sorted([
-        int(f.name.split("_")[1]) for f in raw_dir.glob("chapter_*_raw.md")
-    ])
+    available_raws = get_chapter_numbers(raw_dir, "chapter_*_raw.md")
+    translated_ai = get_chapter_numbers(ai_dir, "chapter_*_ai.md")
 
     if not available_raws:
         print("\n[LỖI] Chưa có chapter raw nào trong thư mục raw/ để dịch.")
         return
 
-    print(f"\nDanh sách chapter raw hiện có: {available_raws}")
-    trans_selection = input("Chọn chapter cần dịch (Ví dụ: 1 | 1-5 | 1,3,7 | Nhập 0 để hủy):\n> ").strip()
+    # Chỉ so sánh những chapter raw hiện đang tồn tại với AI_translated.
+    translated_set = set(translated_ai)
+    available_set = set(available_raws)
+
+    translated_available = sorted(available_set & translated_set)
+    untranslated_available = sorted(available_set - translated_set)
+
+    print("\n=== TRẠNG THÁI CHAPTER AI ===")
+    print(f"- Đã dịch AI     : {format_chapter_ranges(translated_available)}")
+    print(f"- Chưa dịch AI   : {format_chapter_ranges(untranslated_available)}")
+    print(f"- Tổng chapter raw: {len(available_raws)}")
+    print()
+
+    trans_selection = input(
+        "Chọn chapter cần dịch "
+        "(Ví dụ: 1 | 1-5 | 1,3,7 | Nhập 0 để hủy):\n> "
+    ).strip()
 
     if trans_selection == "0":
         print("[THÔNG BÁO] Đã hủy dịch AI.")
@@ -82,7 +139,25 @@ def translate_chapters_flow(project_dir: Path, api_key: str, enable_ai: bool):
         print(f"[LỖI] {err}")
         return
 
-    model = "gemini-3.5-flash"
+    print("\nChọn Model AI:")
+    print("1. gemini-3.5-flash")
+    print("2. gemini-3.6-flash")
+    print("3. gemini-3.7-flash")
+    print("4. gemini-3.8-flash")
+    print("5. Tự nhập Model ID")
+    
+    model_choice = get_user_choice("Lựa chọn [1-5]: ", ["1", "2", "3", "4", "5"])
+    
+    if model_choice == "5":
+        while True:
+            custom_model = input("Nhập Model ID: ").strip()
+            if custom_model:
+                model = custom_model
+                break
+            print("[LỖI] Model ID không được để trống.")
+    else:
+        model = MODEL_MAP[model_choice]
+    
     print("\nChọn Thinking Level:")
     print("1. MINIMAL\n2. LOW\n3. MEDIUM\n4. HIGH")
     lvl_choice = get_user_choice("Lựa chọn [1-4]: ", ["1", "2", "3", "4"])
