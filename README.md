@@ -24,11 +24,14 @@ Có hỗ trợ tích hợp AI
 
 
 ## To-do
-1. Cần có cơ chế thay đổi model AI
-    Hiện tại mặc định là gemini-3.5-flash
-2. Tối ưu hóa logic của hệ thống `engine/`
+1. Tích hợp publish lên hako
+2. Tinh chỉnh lại tương tác CLI
+3. Tối ưu hóa logic của hệ thống `engine/`
 
 ## Update logs
+
+### 13/Sep/2026
+Done cơ chế thay đổi model AI
 
 ### 07/Sep/2026
 Overhaul 90% cách tương tác 
